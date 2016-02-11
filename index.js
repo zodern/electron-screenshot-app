@@ -4,8 +4,10 @@ const BrowserWindow = require('electron').BrowserWindow;
 const ipcMain = require('electron').ipcMain;
 const path = require('path');
 const objectAssign = require('object-assign');
+let   windowCount = 0;
 
 module.exports = function (options, callback) {
+	windowCount += 1;
 	if (process.env.NODESCREENSHOT_SHOW === '1') {
 		options.show = true;
 	}
@@ -37,6 +39,7 @@ module.exports = function (options, callback) {
 	);
 
 	const cleanup = () => {
+		windowCount -= 1;
 		popupWindow.removeAllListeners();
 		popupWindow.webContents.removeAllListeners();
 		setTimeout(() => {
