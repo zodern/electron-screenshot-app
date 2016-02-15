@@ -132,6 +132,16 @@ module.exports = function (options, callback) {
 		callback(new Error(`[${errorCode}] ${errorDescription}`));
 		cleanup();
 	});
+	
+	popupWindow.webContents.on('did-get-redirect-request', function (event, oldUrl, newUrl, isMainFrame, httpResponseCode, requestMethod, referer, headers) {
+	console.log('-- redirect --');
+	console.log('oldUrl', oldUrl);
+	console.log('newUrl', newUrl);
+	console.log('isMainFrame', isMainFrame);
+	console.log('httpResponseCode', httpResponseCode);
+	console.log('requestMethod', requestMethod);
+	console.log('referer', referer);
+	});
 
 	popupWindow.webContents.on('crashed', () => {
 		callback(new Error('Render process crashed'));
