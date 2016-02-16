@@ -15,7 +15,8 @@ module.exports = function (options, callback) {
 		{
 			show: false,
 			nodeIntegration: false,
-			transparent: false
+			transparent: false,
+      useContentSize: true
 		},
 		// User values
 		options,
@@ -41,8 +42,8 @@ module.exports = function (options, callback) {
 		popupWindow.webContents.removeAllListeners();
 		setTimeout(() => {
 			if (popupWindow) {
-				popupWindow.destroy();
-				popupWindow = null;
+				//popupWindow.destroy();
+				//popupWindow = null;
 			}
 		}, 100);
 	};
@@ -92,6 +93,7 @@ module.exports = function (options, callback) {
 			// Don't be smaller than options.width, options.height
 			popupWindow.setSize(Math.max(options.width, data.width), Math.max(options.height, data.height));
 			popupWindow.webContents.executeJavaScript('window["$$electron__loaded"]()');
+      console.log(data);
 		});
 
 		// requestAnimationFrame will call the function before the next repaint.
@@ -101,7 +103,7 @@ module.exports = function (options, callback) {
 			function $$electron__load(){$$electronIpc.send("${loadEvent}", { devicePixelRatio: window.devicePixelRatio });};
 			function $$electron__size(){var w = window,d = document,e = d.documentElement,g = d.body,
 			width = Math.max(w.innerWidth, e.clientWidth, g.clientWidth),
-			height = Math.max(w.innerHeight, e.clientHeight, g.clientHeight);
+			height = Math.max(w.innerHeight, e.clientHeight, g.clientHeight, e.scrollHeight);
 			$$electronIpc.send("${sizeEvent}",{width: width, height: height});
 			};
 			function $$electron__loaded(){
