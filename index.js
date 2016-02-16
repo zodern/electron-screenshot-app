@@ -88,6 +88,7 @@ module.exports = function (options, callback) {
 
 		// Register the IPC sizeEvent once
 		ipcMain.once(sizeEvent, (e, data) => {
+      console.log('size event received');
 			// Don't be smaller than options.width, options.height
 			popupWindow.setSize(Math.max(options.width, data.width), Math.max(options.height, data.height));
 			popupWindow.webContents.executeJavaScript('window["$$electron__loaded"]()');
@@ -132,15 +133,17 @@ module.exports = function (options, callback) {
 		callback(new Error(`[${errorCode}] ${errorDescription}`));
 		cleanup();
 	});
-	
+
 	popupWindow.webContents.on('did-get-redirect-request', function (event, oldUrl, newUrl, isMainFrame, httpResponseCode, requestMethod, referer, headers) {
-	console.log('-- redirect --');
-	console.log('oldUrl', oldUrl);
-	console.log('newUrl', newUrl);
-	console.log('isMainFrame', isMainFrame);
-	console.log('httpResponseCode', httpResponseCode);
-	console.log('requestMethod', requestMethod);
-	console.log('referer', referer);
+	if(isMainFrame) {
+    console.log('-- redirect --');
+    console.log('oldUrl', oldUrl);
+    console.log('newUrl', newUrl);
+    console.log('isMainFrame', isMainFrame);
+    console.log('httpResponseCode', httpResponseCode);
+    console.log('requestMethod', requestMethod);
+    console.log('referer', referer);
+  }
 	});
 
 	popupWindow.webContents.on('crashed', () => {
