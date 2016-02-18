@@ -42,8 +42,8 @@ module.exports = function (options, callback) {
 		popupWindow.webContents.removeAllListeners();
 		setTimeout(() => {
 			if (popupWindow) {
-				//popupWindow.destroy();
-				//popupWindow = null;
+				popupWindow.destroy();
+				popupWindow = null;
 			}
 		}, 100);
 	};
