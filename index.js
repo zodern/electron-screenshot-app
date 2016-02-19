@@ -32,7 +32,8 @@ module.exports = function (options, callback) {
 			preload: path.join(__dirname, 'preload.js'),
 			webPreferences: {
 				webSecurity: (options.security === undefined || options.security),
-				defaultEncoding: 'utf-8'
+				defaultEncoding: 'utf-8',
+				webaudio: false
 			}
 		})
 	);
