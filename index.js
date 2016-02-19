@@ -146,6 +146,9 @@ module.exports = function (options, callback) {
     console.log('httpResponseCode', httpResponseCode);
     console.log('requestMethod', requestMethod);
     console.log('referer', referer);
+    cleanup();
+    options.url = newUrl;
+    return module.exports(options, callback);
   }
 	});
 
