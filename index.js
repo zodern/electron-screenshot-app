@@ -6,6 +6,10 @@ const path = require('path');
 const objectAssign = require('object-assign');
 
 module.exports = function (options, callback) {
+	function log (text) {
+			console.log(options.url, ']', text);
+	}
+	
 	if (process.env.NODESCREENSHOT_SHOW === '1') {
 		options.show = true;
 	}
@@ -16,7 +20,7 @@ module.exports = function (options, callback) {
 			show: false,
 			nodeIntegration: false,
 			transparent: false,
-      useContentSize: true
+      			useContentSize: true
 		},
 		// User values
 		options,
@@ -39,6 +43,7 @@ module.exports = function (options, callback) {
 	);
 
 	const cleanup = () => {
+		log('cleanup');
 		clearTimeout(timeout);
 		popupWindow.removeAllListeners();
 		popupWindow.webContents.removeAllListeners();
@@ -59,6 +64,7 @@ module.exports = function (options, callback) {
 	
 	let makingScreenshot = false;
 	const makeScreenshot = () => {
+		log('making screenshot');
 		// Remove any loadTimeout
 		clearTimeout(loadTimeout);
 		
@@ -75,9 +81,12 @@ module.exports = function (options, callback) {
 
 		// Register the IPC load event once
 		ipcMain.once(loadEventName, (e, meta) => {
+			log('load event');
 			// Delay the screenshot
 			setTimeout(() => {
+				log('delay over');
 				const cb = data => {
+					log('took screenshot');
 					const obj = {
 						data: ((options.format === 'jpeg') ? data.toJpeg((options.quality ? options.quality : 80)) : data.toPng()),
 						size: data.getSize()
@@ -174,11 +183,13 @@ module.exports = function (options, callback) {
 
 	let asked = false;
 	popupWindow.webContents.on('did-stop-loading', () => {
+		log('did-stop-loading');
 		resetTimeout(makeScreenshot);
 
 		// Shortcut for pages without any iframes
 		if (!asked) {
 			ipcMain.once('frame-count', (e, count) => {
+				log('frame count ' + count);
 				// Call it directly
 				if (count === 0) {
 					makeScreenshot();
@@ -194,6 +205,7 @@ module.exports = function (options, callback) {
 	
 	var timeout = setTimeout(function () {
 		if(makingScreenshot === false) {
+			log('timeout finished');
 			makeScreenshot();
 		}
 	}, 25000);
