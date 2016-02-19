@@ -37,6 +37,7 @@ module.exports = function (options, callback) {
 	);
 
 	const cleanup = () => {
+    clearTimeout(loadTimeout);
 		popupWindow.removeAllListeners();
 		popupWindow.webContents.removeAllListeners();
 		setTimeout(() => {
@@ -50,7 +51,7 @@ module.exports = function (options, callback) {
 	let loadTimeout;
 	const resetTimeout = func => {
 		clearTimeout(loadTimeout);
-		loadTimeout = setTimeout(func, options.timeout || 2000);
+		loadTimeout = setTimeout(func, options.timeout || 25000);
 	};
 
 	const makeScreenshot = () => {
@@ -147,7 +148,6 @@ module.exports = function (options, callback) {
 
 	let asked = false;
 	popupWindow.webContents.on('did-stop-loading', () => {
-		resetTimeout(makeScreenshot);
 
 		// Shortcut for pages without any iframes
 		if (!asked) {
@@ -164,4 +164,6 @@ module.exports = function (options, callback) {
 
 	// Start loading the URL
 	popupWindow.loadURL(options.url);
+  resetTimeout(makeScreenshot);
+
 };
