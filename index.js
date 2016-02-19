@@ -39,6 +39,7 @@ module.exports = function (options, callback) {
 	);
 
 	const cleanup = () => {
+		clearTimeout(timeout);
 		popupWindow.removeAllListeners();
 		popupWindow.webContents.removeAllListeners();
 		setTimeout(() => {
