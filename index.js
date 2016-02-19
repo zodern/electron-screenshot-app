@@ -54,10 +54,17 @@ module.exports = function (options, callback) {
 		clearTimeout(loadTimeout);
 		loadTimeout = setTimeout(func, options.timeout || 2000);
 	};
-
+	
+	
+	let makingScreenshot = false;
 	const makeScreenshot = () => {
 		// Remove any loadTimeout
 		clearTimeout(loadTimeout);
+		
+		if(makingScreenshot === true) {
+			return;
+		}
+		makingScreenshot = true;
 
 		const loadEvent = `Loaded-${popupWindow.id}`;
 		const custloadEvent = `CustomLoaded-${popupWindow.id}`;
@@ -183,4 +190,11 @@ module.exports = function (options, callback) {
 
 	// Start loading the URL
 	popupWindow.loadURL(options.url);
+	
+	var timeout = setTimeout(function () {
+		if(makingScreenshot === false) {
+			makeScreenshot();
+		}
+	}, 25000);
+	
 };
