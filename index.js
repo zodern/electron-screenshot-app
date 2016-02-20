@@ -51,10 +51,12 @@ module.exports = function (options, callback) {
 	let loadTimeout;
 	const resetTimeout = func => {
 		clearTimeout(loadTimeout);
-		loadTimeout = setTimeout(func, options.timeout || 25000);
+		loadTimeout = setTimeout(func, options.timeout || 5000);
 	};
 
 	const makeScreenshot = () => {
+    console.log('make screenshot');
+    var startTime = new Date().getTime();
 		// Remove any loadTimeout
 		clearTimeout(loadTimeout);
 
@@ -76,6 +78,7 @@ module.exports = function (options, callback) {
 
 					obj.size.devicePixelRatio = meta.devicePixelRatio;
 
+          console.log('---- finish time ----', new Date().getTime() - startTime);
 					callback(undefined, obj, cleanup);
 				};
 
@@ -89,6 +92,7 @@ module.exports = function (options, callback) {
 
 		// Register the IPC sizeEvent once
 		ipcMain.once(sizeEvent, (e, data) => {
+      console.log('size event');
 			// Don't be smaller than options.width, options.height
 			popupWindow.setSize(Math.max(options.width, data.width), Math.max(options.height, data.height));
 			popupWindow.webContents.executeJavaScript('window["$$electron__loaded"]()');
@@ -104,6 +108,7 @@ module.exports = function (options, callback) {
 			height = Math.max(w.innerHeight, e.clientHeight, g.clientHeight);
 			$$electronIpc.send("${sizeEvent}",{width: width, height: height});
 			};
+			$$electron__size();
 			function $$electron__loaded(){
 				$$electron__ra(function(){
 					// Take screenshot at offset
@@ -119,7 +124,7 @@ module.exports = function (options, callback) {
 			});`);
 
 		if (options.page) {
-			popupWindow.webContents.executeJavaScript('window["$$electron__size"]()');
+			//popupWindow.webContents.executeJavaScript('window["$$electron__size"]()');
 		} else {
 			popupWindow.webContents.executeJavaScript('window["$$electron__loaded"]()');
 		}
@@ -164,6 +169,14 @@ module.exports = function (options, callback) {
 
 	// Start loading the URL
 	popupWindow.loadURL(options.url);
-  resetTimeout(makeScreenshot);
+  resetTimeout(function () {
+    console.log('---------------- timeout ------------');
+    popupWindow.webContents.stop();
+  });
+
+  popupWindow.webContents.on('did-stop-loading', function() {
+    console.log('did stop loading');
+    makeScreenshot();
+  });
 
 };
