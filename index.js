@@ -64,6 +64,11 @@ module.exports = function (options, callback) {
 	
 	let makingScreenshot = false;
 	const makeScreenshot = () => {
+		if(makingScreenshot === true) {
+			      console.log('======= already making screenshot ======');
+		}
+		makingScreenshot = true;
+		
 		log('making screenshot');
 		// Remove any loadTimeout
 		clearTimeout(loadTimeout);
