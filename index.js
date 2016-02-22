@@ -42,7 +42,15 @@ module.exports = function (options, callback) {
 		})
 	);
 
+
+
+
+	var didCleanup = false;
 	const cleanup = () => {
+		if(didCleanup === true) {
+      			console.log('==== cleanup trice ===');
+    		}
+    		didCleanup = true;
 		log('cleanup');
 		clearTimeout(timeout);
 		popupWindow.removeAllListeners();
